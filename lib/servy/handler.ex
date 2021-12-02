@@ -2,6 +2,7 @@ defmodule Servy.Handler do
   def handle(request) do
     request
     |> parse()
+    |> log()
     |> route()
     |> format_response()
   end
@@ -17,11 +18,18 @@ defmodule Servy.Handler do
   end
 
   def route(conv) do
+    route(conv, conv.method, conv.path)
+  end
+
+  def route(conv, "GET", "/wildthings") do
     %{conv | resp_body: "Bears, Lions, Tigers"}
   end
 
+  def route(conv, "GET", "/bears") do
+    %{conv | resp_body: "Teddy, Smokey, Paddington"}
+  end
+
   def format_response(conv) do
-    # TODO: Use values in the map to create an HTTP response string
     """
     HTTP/1.1 200 OK
     Content-Type: text/html
@@ -30,10 +38,36 @@ defmodule Servy.Handler do
     #{conv.resp_body}
     """
   end
+
+  defp log(conv), do: IO.inspect(conv)
 end
 
 request = """
 GET /wildthings HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+request
+|> Servy.Handler.handle()
+|> IO.puts()
+
+request = """
+GET /bears HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+request
+|> Servy.Handler.handle()
+|> IO.puts()
+
+request = """
+GET /bigfoot HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
