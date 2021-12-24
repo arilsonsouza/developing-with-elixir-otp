@@ -44,6 +44,13 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Bear #{id}"}
   end
 
+  def route(%{method: "GET", path: "/about"} = conv) do
+    Path.expand("../../pages", __DIR__)
+    |> Path.join("about.html")
+    |> File.read()
+    |> handle_file(conv)
+  end
+
   def route(%{path: path} = conv) do
     %{conv | status: 404, resp_body: "No #{path} here!"}
   end
@@ -67,6 +74,18 @@ defmodule Servy.Handler do
       404 => "Not Found",
       500 => "Internal Server Error"
     }[code]
+  end
+
+  defp handle_file({:ok, content}, conv) do
+    %{conv | status: 200, resp_body: content}
+  end
+
+  defp handle_file({:error, :enoent}, conv) do
+    %{conv | status: 404, resp_body: "File not found"}
+  end
+
+  defp handle_file({:error, reason}, conv) do
+    %{conv | status: 200, resp_body: "File error: #{reason}"}
   end
 
   defp log(conv), do: IO.inspect(conv)
@@ -110,6 +129,18 @@ request
 
 request = """
 GET /bears/1 HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+request
+|> Servy.Handler.handle()
+|> IO.puts()
+
+request = """
+GET /about HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
