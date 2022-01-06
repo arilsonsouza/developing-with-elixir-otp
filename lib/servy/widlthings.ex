@@ -15,4 +15,12 @@ defmodule Servy.Widlthings do
       %Bear{id: 10, name: "Kenai", type: "Grizzly"}
     ]
   end
+
+  def get_bear(id) when is_integer(id) do
+    Enum.find(list_bears(), &(&1.id == id))
+  end
+
+  def get_bear(id) when is_binary(id) do
+    id |> String.to_integer() |> get_bear()
+  end
 end
