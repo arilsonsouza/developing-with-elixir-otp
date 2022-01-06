@@ -1,4 +1,4 @@
-defmodule Servy.Widlthings do
+defmodule Servy.Wildthings do
   alias Servy.Bear
 
   def list_bears do
