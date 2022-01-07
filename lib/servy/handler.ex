@@ -53,10 +53,10 @@ defmodule Servy.Handler do
 
   def format_response(%Conv{} = conv) do
     """
-    HTTP/1.1 #{Conv.full_status(conv)}
-    Content-Type: text/html
-    Content-Length: #{String.length(conv.resp_body)}
-
+    HTTP/1.1 #{Conv.full_status(conv)}\r
+    Content-Type: text/html\r
+    Content-Length: #{String.length(conv.resp_body)}\r
+    \r
     #{conv.resp_body}
     """
   end
@@ -73,78 +73,3 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "File error: #{reason}"}
   end
 end
-
-request = """
-GET /wildthings HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-request
-|> Servy.Handler.handle()
-|> IO.puts()
-
-request = """
-GET /bears HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-request
-|> Servy.Handler.handle()
-|> IO.puts()
-
-request = """
-GET /bigfoot HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-request
-|> Servy.Handler.handle()
-|> IO.puts()
-
-request = """
-GET /bears/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-request
-|> Servy.Handler.handle()
-|> IO.puts()
-
-request = """
-GET /about HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-request
-|> Servy.Handler.handle()
-|> IO.puts()
-
-request = """
-POST /bears HTTP/1.1
-HOST: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 21
-
-name=Baloo&type=Brown
-"""
-
-request
-|> Servy.Handler.handle()
-|> IO.puts()
